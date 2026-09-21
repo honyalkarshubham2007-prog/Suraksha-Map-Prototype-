@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="SurakshaMap — community safety issue reporting and hotspot intelligence."
+    />
+    <title>SurakshaMap | Community Safety Intelligence</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      crossorigin=""
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="brand">
+        <!-- Logo placeholder: swap this <img> for your real SurakshaMap_logo.png. Sizing/position kept identical so the swap is a one-line change. -->
+        <img
+          src="SurakshaMap_logo.png"
+          alt="SurakshaMap logo"
+          class="brand-logo"
+          onerror="
+            this.style.display = 'none';
+            document.getElementById('logo-fallback').style.display = 'flex';
+          "
+        />
+        <div
+          id="logo-fallback"
+          class="brand-logo brand-logo-fallback"
+          aria-hidden="true"
+        >
+          <svg
+            viewBox="0 0 48 48"
+            width="30"
+            height="30"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M24 4 L42 11 V22 C42 33 34.5 41 24 44 C13.5 41 6 33 6 22 V11 Z"
+              fill="#56C8BD"
+              stroke="#0A5C54"
+              stroke-width="2"
+            />
+            <path
+              d="M17 23.5 L22 28.5 L32 17.5"
+              stroke="#0A3A38"
+              stroke-width="3"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+        <div class="brand-text">
+
+          <h1>Suraksha Map</h1>
+        </div>
+      </div>
+      <button
+        id="nav-toggle"
+        class="nav-toggle"
+        aria-expanded="false"
+        aria-controls="main-nav"
+      >
+        <span></span><span></span><span></span>
+      </button>
+      <nav id="main-nav" aria-label="Main navigation">
+        <button class="nav-button active" data-view="home">Home</button>
+        <button class="nav-button" data-view="report">Report an issue</button>
+        <button class="nav-button" data-view="track">Track report</button>
+        <button class="nav-button" data-view="map">Safety map</button>
+        <button class="nav-button" data-view="dashboard">Dashboard</button>
+      </nav>
+    </header>
+
+    <main class="container">
+      <div id="storage-notice" class="notice error" hidden>
+        <strong>Browser storage warning:</strong> Reports may not persist if
+        this browser blocks local storage. This prototype keeps a temporary
+        in-memory copy until the page is closed.
+      </div>
+
+      <!-- HOME -->
+      <section id="home-view" class="view active-view">
+        <div class="hero panel">
+          <div class="hero-copy">
+            <p class="hero-tag">Privacy-preserving community reporting</p>
+            <h2>See a problem in your neighbourhood? Put it on the record.</h2>
+            <p class="hero-sub">
+              Report broken lighting, unsafe crossings, obstructions and
+              waterlogging with a photo and a pin. SurakshaMap groups nearby
+              reports into hotspots, scores risk transparently, and points to a
+              practical next step.
+            </p>
+            <div class="hero-actions">
+              <button class="primary-button" data-view="report">
+                Report a problem
+              </button>
+              <button class="ghost-button" data-view="map">
+                View the safety map
+              </button>
+            </div>
+          </div>
+          <div class="hero-panel-stat">
+            <span class="stat-label">Open reports</span>
+            <strong id="home-open-count">0</strong>
+            <div class="hero-panel-row">
+              <span>Hotspots flagged</span>
+              <strong id="home-hotspot-count">0</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="three-columns">
+          <article class="panel step-card">
+            <span class="step-number">1</span>
+            <h3>Report</h3>
+            <p>
+              Submit a category, severity, description, an approximate location
+              and, if useful, a photo — no name or phone number needed.
+            </p>
+          </article>
+          <article class="panel step-card">
+            <span class="step-number">2</span>
+            <h3>Understand</h3>
+            <p>
+              Every report is scored on transparent factors: severity, category,
+              recency and time of day — never a black box.
+            </p>
+          </article>
+          <article class="panel step-card">
+            <span class="step-number">3</span>
+            <h3>Act</h3>
+            <p>
+              Track your report with a token, follow status changes, and see the
+              recommended intervention on the dashboard.
+            </p>
+          </article>
+        </div>
+
+        <div class="notice">
+          <strong>Responsible use.</strong> This prototype does not predict
+          crime, identify people, or replace human verification. It is a
+          visibility tool for public-space maintenance and safety issues.
+        </div>
+      </section>
+
+      <!-- REPORT -->
+      <section id="report-view" class="view">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Citizen reporting</p>
+            <h2>Report a public-space issue</h2>
+          </div>
+        </div>
+        <form id="report-form" class="panel form-grid">
+          <label
+            >Issue category
+            <select id="category" required>
+              <option value="Broken streetlight">Broken streetlight</option>
+              <option value="Open manhole">Open manhole</option>
+              <option value="Unsafe crossing">Unsafe crossing</option>
+              <option value="Broken footpath">Broken footpath</option>
+              <option value="Obstruction">Obstruction</option>
+              <option value="Waterlogging">Waterlogging</option>
+              <option value="Other">Other</option>
+            </select>
+          </label>
+          <label
+            >Severity
+            <select id="severity" required>
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+              <option value="critical">Critical</option>
+            </select>
+          </label>
+          <label class="full-width"
+            >Description
+            <textarea
+              id="description"
+              maxlength="1000"
+              rows="4"
+              placeholder="Describe what you observed and where it is located..."
+              required
+            ></textarea>
+          </label>
+
+          <div class="photo-box full-width">
+            <div class="photo-box-head">
+              <strong>Add a photo</strong>
+              <span class="muted"
+                >Optional &middot; helps reviewers verify the issue faster</span
+              >
+            </div>
+            <div class="photo-input-row">
+              <label class="file-button" for="photo-input">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M4 8h3l2-3h6l2 3h3v11H4V8Z"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linejoin="round"
+                  />
+                  <circle
+                    cx="12"
+                    cy="13.5"
+                    r="3.2"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                  />
+                </svg>
+                <span>Choose photo</span>
+              </label>
+              <input id="photo-input" type="file" accept="image/*" hidden />
+              <span id="photo-file-name" class="muted">No photo selected</span>
+              <button
+                type="button"
+                id="remove-photo"
+                class="text-button"
+                hidden
+              >
+                Remove
+              </button>
+            </div>
+            <img
+              id="photo-preview"
+              class="photo-preview"
+              hidden
+              alt="Selected report photo preview"
+            />
+            <p class="tiny-note">
+              Photos are resized in your browser before saving and never leave
+              your device in this prototype.
+            </p>
+          </div>
+
+          <div class="location-box full-width">
+            <div>
+              <strong>Approximate location</strong>
+              <p id="location-status">
+                Enter coordinates or use your device location.
+              </p>
+            </div>
+            <div class="location-inputs">
+              <label
+                >Latitude<input
+                  id="latitude"
+                  type="number"
+                  step="any"
+                  value="19.1234"
+                  required
+              /></label>
+              <label
+                >Longitude<input
+                  id="longitude"
+                  type="number"
+                  step="any"
+                  value="72.9876"
+                  required
+              /></label>
+            </div>
+            <button type="button" id="use-location" class="secondary-button">
+              Use my location
+            </button>
+          </div>
+
+          <p class="privacy-note full-width">
+            <strong>Privacy.</strong> No name, phone number or email is
+            collected. Location is rounded before it is stored, and photos stay
+            in your browser.
+          </p>
+          <button type="submit" class="primary-button full-width">
+            Submit report
+          </button>
+          <p
+            id="form-message"
+            class="form-message full-width"
+            role="status"
+          ></p>
+        </form>
+      </section>
+
+      <!-- TRACK -->
+      <section id="track-view" class="view">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Report tracking</p>
+            <h2>Check your report</h2>
+          </div>
+        </div>
+        <div class="panel tracking-search">
+          <p class="muted">
+            Enter the tracking token you received after submitting a report.
+            Tracking works in the browser where the report was saved.
+          </p>
+          <div class="tracking-input-row">
+            <input
+              id="tracking-token"
+              type="text"
+              placeholder="Example: SM-ABCD-7K9P"
+              autocomplete="off"
+            />
+            <button id="track-button" class="primary-button" type="button">
+              Check status
+            </button>
+          </div>
+          <div id="tracking-result" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <!-- MAP -->
+      <section id="map-view" class="view">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Geographic view</p>
+            <h2>Safety map</h2>
+          </div>
+          <div class="filters">
+            <select id="map-filter">
+              <option value="all">All categories</option>
+              <option>Broken streetlight</option>
+              <option>Open manhole</option>
+              <option>Unsafe crossing</option>
+              <option>Broken footpath</option>
+              <option>Obstruction</option>
+              <option>Waterlogging</option>
+              <option>Other</option>
+            </select>
+            <select id="status-filter">
+              <option value="all">All statuses</option>
+              <option value="open">Open</option>
+              <option value="under_review">Under review</option>
+              <option value="resolved">Resolved</option>
+              <option value="closed">Closed</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+        </div>
+        <div id="map" class="map panel"></div>
+        <div class="legend panel">
+          <span><i class="dot low"></i> Low</span>
+          <span><i class="dot medium"></i> Medium</span>
+          <span><i class="dot high"></i> High</span>
+          <span><i class="dot critical"></i> Critical</span>
+        </div>
+      </section>
+
+      <!-- DASHBOARD -->
+      <section id="dashboard-view" class="view">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Operations overview</p>
+            <h2>Community safety dashboard</h2>
+          </div>
+        </div>
+        <div class="stats-grid">
+          <div class="stat panel">
+            <span>Total reports</span><strong id="total-reports">0</strong>
+          </div>
+          <div class="stat panel">
+            <span>Open reports</span><strong id="open-reports">0</strong>
+          </div>
+          <div class="stat panel">
+            <span>Under review</span
+            ><strong id="under-review-reports">0</strong>
+          </div>
+          <div class="stat panel">
+            <span>High-risk hotspots</span><strong id="high-hotspots">0</strong>
+          </div>
+          <div class="stat panel">
+            <span>Resolved reports</span
+            ><strong id="resolved-reports">0</strong>
+          </div>
+        </div>
+        <div class="dashboard-grid">
+          <div class="panel">
+            <h3>Priority hotspots</h3>
+            <div id="hotspot-list" class="hotspot-list"></div>
+          </div>
+          <div class="panel">
+            <h3>Reports by category</h3>
+            <div id="category-list" class="category-list"></div>
+          </div>
+        </div>
+        <div class="panel report-management">
+          <div class="section-heading compact">
+            <div>
+              <h3>Public reports</h3>
+              <p class="muted">
+                Only administrator-approved reports are shown here. Public users
+                can change their own approved report to Resolved using its
+                tracking token.
+              </p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Token</th>
+                  <th>Photo</th>
+                  <th>Issue</th>
+                  <th>Risk</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="report-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>
+        SurakshaMap is a hackathon prototype. Reports require human verification
+        before action. Reports are stored locally in this browser for this
+        hackathon prototype. Pending reports remain hidden from the public map
+        and dashboard until admin approval.
+      </p>
+      <p class="footer-links">
+        <a href="privacy.html">Privacy policy</a> &middot;
+        <a href="admin.html">Admin login</a>
+      </p>
+    </footer>
+
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      crossorigin=""
+      defer
+    ></script>
+    <script src="surakshamap-risk.js" defer></script>
+    <script src="app.js?v=20260919-2" defer></script>
+  </body>
+</html>

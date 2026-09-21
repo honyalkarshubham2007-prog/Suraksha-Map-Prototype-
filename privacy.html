@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="SurakshaMap privacy policy — what data is collected and how it's stored." />
+    <title>Privacy Policy | SurakshaMap</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="brand">
+        <img src="SurakshaMap_logo.png" alt="SurakshaMap logo" class="brand-logo" onerror="this.style.display='none'; document.getElementById('logo-fallback').style.display='flex';" />
+        <div id="logo-fallback" class="brand-logo brand-logo-fallback" aria-hidden="true">
+          <svg viewBox="0 0 48 48" width="30" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M24 4 L42 11 V22 C42 33 34.5 41 24 44 C13.5 41 6 33 6 22 V11 Z" fill="#56C8BD" stroke="#0A5C54" stroke-width="2"/>
+            <path d="M17 23.5 L22 28.5 L32 17.5" stroke="#0A3A38" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <p class="brand-kicker">Technathon 2026 &middot; PS 12</p>
+          <h1>SurakshaMap</h1>
+        </div>
+      </div>
+      <nav aria-label="Main navigation">
+        <a class="nav-button" href="index.html">Back to site</a>
+      </nav>
+    </header>
+
+    <main class="container">
+      <section class="view active-view">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Legal</p>
+            <h2>Privacy Policy</h2>
+          </div>
+        </div>
+
+        <div class="panel" style="padding: 30px; max-width: 860px;">
+          <p class="muted" style="margin-top:0;">Last updated: this is a hackathon prototype build, current as of its submission date.</p>
+
+          <h3>The short version</h3>
+          <p class="muted">SurakshaMap does not ask for your name, phone number, or email at any point. Nothing you submit is sent to a server — everything lives only in your own browser, on your own device.</p>
+
+          <h3>What we collect</h3>
+          <p class="muted">When you submit a report, we store: the issue category, severity, your description, an optional photo, and a location (which you enter manually or share once via your device's GPS). None of this is linked to your identity. There is no account, login, or tracking cookie anywhere on this site.</p>
+
+          <h3>Where it's stored</h3>
+          <p class="muted">All reports are saved using your browser's built-in <code>localStorage</code>. That means your data stays on your device, in that specific browser — it is never transmitted to us, to a server, or to any third party. Clearing your browser data, or opening the site in a different browser or device, will not show your previous reports, because there is no central database.</p>
+
+          <h3>Photos</h3>
+          <p class="muted">If you attach a photo, it is resized and compressed inside your browser before being saved. It never leaves your device — there is no upload, no cloud storage, and no server-side processing.</p>
+
+          <h3>Location</h3>
+          <p class="muted">If you choose "Use my location," your browser will ask permission before sharing your device's GPS coordinates. You can always enter coordinates manually instead. Submitted coordinates are rounded and are not precise enough to identify an exact doorway or private property.</p>
+
+          <h3>Tracking tokens</h3>
+          <p class="muted">Each report gets a random tracking token (like <code>SM-AB12-CD34</code>) so you can check its status later. The token is not tied to your identity — anyone who has the token can look up that one report's status, which is why it isn't shown publicly anywhere and is only revealed to you once, at submission.</p>
+
+          <h3>The admin panel</h3>
+          <p class="muted">Because this prototype has no backend or authentication system, the admin panel is only a local management view of the reports already stored in that browser. It is not a real, secured admin system — a production deployment would need proper authentication before that kind of access control means anything.</p>
+
+          <h3>Questions</h3>
+          <p class="muted">This is a hackathon prototype, not a deployed public service. It does not predict crime, identify individuals, or replace official verification — it is a visibility tool for public-space maintenance and safety issues.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>SurakshaMap is a hackathon prototype. Reports require human verification before action. Data is stored locally in this browser only.</p>
+      <p class="footer-links"><a href="index.html">Home</a> &middot; <a href="admin.html">Admin panel</a></p>
+    </footer>
+  </body>
+</html>
